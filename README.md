@@ -1,12 +1,12 @@
-# Projeto Prático - Azure Machine Learning
+# Projeto Prático - Previsão de Aluguel de Bicicletas com Azure Machine Learning
 
-Este repositório contém o projeto prático desenvolvido como parte do curso de Fundamentos de Inteligência Artificial com Azure Machine Learning. O objetivo foi criar, treinar e publicar um modelo preditivo utilizando os recursos do Azure ML Studio.
+Este repositório contém o projeto prático desenvolvido como parte do curso de Fundamentos de Inteligência Artificial com Azure Machine Learning. Utilizamos o Azure ML Studio para criar, treinar e publicar um modelo de regressão para prever a demanda por bicicletas com base em dados históricos.
 
 ---
 
 ## 📌 Objetivo
 
-Criar um modelo de Machine Learning com previsão baseada em dados reais, utilizando a ferramenta Azure Machine Learning Studio, e publicar um ponto de extremidade (endpoint) para inferência via API.
+Criar um modelo preditivo para estimar o número de bicicletas alugadas por hora, com base em variáveis como temperatura, umidade, estação do ano e outros fatores ambientais e temporais.
 
 ---
 
@@ -14,39 +14,38 @@ Criar um modelo de Machine Learning com previsão baseada em dados reais, utiliz
 
 ### 1. Criação do Workspace
 - Acesse o portal do [Azure Machine Learning Studio](https://ml.azure.com).
-- Crie um novo workspace com os parâmetros padrão (nome, região, assinatura).
+- Crie um novo workspace com as configurações padrão.
 
 ### 2. Carregamento do Dataset
-- No menu lateral, vá até **Datasets > +Create dataset > From Open Datasets**.
-- Utilizei o dataset **Diabetes**, já disponível na plataforma.
-- O dataset foi registrado no workspace para uso posterior no experimento.
+- Dataset utilizado: **Bike Rental UCI**.
+- Origem: Open Datasets do Azure ML Studio.
+- O dataset foi registrado no workspace para uso em experimentos de AutoML.
 
-### 3. Configuração do Experimento com AutoML
-- Vá até **Automated ML** e clique em **+ New automated ML run**.
+### 3. Execução do AutoML
+- Acesse a seção **Automated ML > + New automated ML run**.
 - Selecione o dataset carregado.
-- Configure o experimento:
-  - Nome do experimento: `diabetes-automl`
-  - Coluna de destino: `Diabetic` ou a variável dependente apropriada
-  - Tipo de tarefa: Classificação (Classification)
-  - Compute cluster: Criado um novo cluster do tipo `Standard_DS11_v2`
-- Inicie o processo e aguarde o AutoML avaliar os melhores modelos.
+- Configurações utilizadas:
+  - Nome do experimento: `bike-rental-automl`
+  - Coluna de destino: `Rental Count` (número de aluguéis)
+  - Tipo de tarefa: Regressão
+  - Compute target: Cluster `Standard_DS11_v2`
+- Iniciamos a execução do AutoML e aguardamos a avaliação dos modelos.
 
-### 4. Avaliação e Seleção do Modelo
-- Após a execução, visualize a tabela de métricas dos modelos.
-- O modelo com melhor desempenho foi selecionado automaticamente com base na métrica `Accuracy` ou `AUC_weighted`.
-- Clique em **Best model > Deploy model**.
+### 4. Avaliação do Modelo
+- O AutoML testou diversos algoritmos de regressão (como Random Forest, ElasticNet, etc.).
+- O modelo com menor erro RMSE foi selecionado automaticamente.
+- Modelo final implantado via botão **Deploy model > Real-time endpoint**.
 
 ### 5. Publicação do Ponto de Extremidade
-- Configure o nome do serviço de inferência.
-- O modelo foi publicado como um **Web Service Endpoint**.
-- A URL do endpoint e a chave de autenticação foram geradas.
-- O arquivo `.json` com as configurações do endpoint foi exportado (presente neste repositório como `endpoint.json`).
+- O modelo foi implantado como um serviço REST com endpoint de inferência em tempo real.
+- O endpoint foi testado via requisições POST com dados no formato JSON.
+- As configurações do endpoint foram exportadas como `endpoint.json`.
 
 ---
 
 ## 📁 Arquivos neste repositório
 
-- `README.md`: Este arquivo com o passo a passo completo do projeto.
-- `endpoint.json`: Arquivo com os detalhes do ponto de extremidade do modelo treinado (inclui URL, chave, métodos de requisição etc.).
+- `README.md`: Instruções detalhadas de como o modelo foi criado.
+- `endpoint.json`: Arquivo com informações do endpoint REST publicado pelo Azure.
 
 ---
