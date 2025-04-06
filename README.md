@@ -1,12 +1,12 @@
-# Projeto Prático - Previsão de Aluguel de Bicicletas com Azure Machine Learning
+# 🚲 Projeto Prático - Previsão de Aluguéis de Bicicletas com Azure AutoML
 
-Este repositório contém o projeto prático desenvolvido como parte do curso de Fundamentos de Inteligência Artificial com Azure Machine Learning. Utilizamos o Azure ML Studio para criar, treinar e publicar um modelo de regressão para prever a demanda por bicicletas com base em dados históricos.
+Este repositório contém o projeto prático desenvolvido como parte do curso de Fundamentos de Inteligência Artificial com Azure Machine Learning. O objetivo foi criar, treinar e publicar um modelo preditivo utilizando os recursos do Azure ML Studio, e também exportar o modelo treinado para uso em ambientes externos, como Google Colab, Kaggle ou Binder.
 
 ---
 
 ## 📌 Objetivo
 
-Criar um modelo preditivo para estimar o número de bicicletas alugadas por hora, com base em variáveis como temperatura, umidade, estação do ano e outros fatores ambientais e temporais.
+Criar um modelo de Machine Learning com previsão baseada em dados reais de aluguéis de bicicletas, utilizando a ferramenta Azure Machine Learning Studio com AutoML, e publicar um ponto de extremidade ou exportar o modelo para uso externo.
 
 ---
 
@@ -14,38 +14,67 @@ Criar um modelo preditivo para estimar o número de bicicletas alugadas por hora
 
 ### 1. Criação do Workspace
 - Acesse o portal do [Azure Machine Learning Studio](https://ml.azure.com).
-- Crie um novo workspace com as configurações padrão.
+- Crie um novo workspace com os parâmetros padrão (nome, região, assinatura).
 
 ### 2. Carregamento do Dataset
-- Dataset utilizado: **Bike Rental UCI**.
-- Origem: Open Datasets do Azure ML Studio.
-- O dataset foi registrado no workspace para uso em experimentos de AutoML.
+- Foi utilizado o dataset **Bike Sharing Dataset**, disponível no [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset).
+- O dataset foi carregado no Azure ML Studio no formato `.csv`, com as colunas listadas abaixo.
 
-### 3. Execução do AutoML
-- Acesse a seção **Automated ML > + New automated ML run**.
-- Selecione o dataset carregado.
-- Configurações utilizadas:
-  - Nome do experimento: `bike-rental-automl`
-  - Coluna de destino: `Rental Count` (número de aluguéis)
-  - Tipo de tarefa: Regressão
-  - Compute target: Cluster `Standard_DS11_v2`
-- Iniciamos a execução do AutoML e aguardamos a avaliação dos modelos.
+#### 🎯 Coluna alvo (target)
+- `rentals`: quantidade de aluguéis
 
-### 4. Avaliação do Modelo
-- O AutoML testou diversos algoritmos de regressão (como Random Forest, ElasticNet, etc.).
-- O modelo com menor erro RMSE foi selecionado automaticamente.
-- Modelo final implantado via botão **Deploy model > Real-time endpoint**.
-
-### 5. Publicação do Ponto de Extremidade
-- O modelo foi implantado como um serviço REST com endpoint de inferência em tempo real.
-- O endpoint foi testado via requisições POST com dados no formato JSON.
-- As configurações do endpoint foram exportadas como `endpoint.json`.
+#### 📥 Atributos utilizados como entrada (features)
+| Coluna        | Descrição                          |
+|---------------|-------------------------------------|
+| `day`         | Dia do mês                         |
+| `mnth`        | Mês (numérico)                     |
+| `year`        | Ano (ex: 2022)                     |
+| `season`      | Estação (1=primavera, 4=inverno)   |
+| `holiday`     | Feriado (0=não, 1=sim)             |
+| `weekday`     | Dia da semana (0=domingo)          |
+| `workingday`  | Dia útil                           |
+| `weathersit`  | Condição climática                 |
+| `temp`        | Temperatura normalizada            |
+| `atemp`       | Sensação térmica normalizada       |
+| `hum`         | Umidade normalizada                |
+| `windspeed`   | Velocidade do vento normalizada    |
 
 ---
 
-## 📁 Arquivos neste repositório
-
-- `README.md`: Instruções detalhadas de como o modelo foi criado.
-- `endpoint.json`: Arquivo com informações do endpoint REST publicado pelo Azure.
+### 3. Treinamento com AutoML
+- Acesse a aba **Automated ML > New automated ML run**
+- Dataset: Bike Sharing Dataset
+- Nome do experimento: `bike-rentals-automl`
+- Coluna de destino: `rentals`
+- Tipo de tarefa: Regressão
+- Compute cluster: `Standard_E4s_v3` (ou similar, respeitando as cotas)
+- Após a execução, o melhor modelo foi selecionado com base na métrica `Normalized Root Mean Squared Error (RMSE)`.
 
 ---
+
+### 4. Exportação e uso externo do modelo
+- O modelo foi exportado como `.pkl` e está disponível neste repositório.
+- Para testar o modelo fora do Azure, utilizamos o ambiente **Binder**, que permite executar notebooks Python na nuvem gratuitamente.
+
+---
+
+## 🚀 Como Executar o Projeto
+
+### ✅ Executar via Binder (100% online e gratuito)
+
+Clique no botão abaixo para abrir o notebook no Binder:
+
+[![Abrir no Binder](https://mybinder.org/badge_logo.svg)](https://notebooks.gesis.org/binder/jupyter/user/oemeferreira-mslearn-azure-ml-ywu74ne6/doc/tree/mslearn-bike-rentals.ipynb)
+
+### 💻 Executar localmente (opcional)
+
+```bash
+# Clonar o repositório
+git clone https://github.com/oemeferreira/mslearn-azure-ml.git
+cd mslearn-azure-ml/mslearnbike
+
+# Instalar dependências
+pip install -r requirements.txt
+
+# Executar o notebook
+jupyter notebook mslearn-bike-rentals.ipynb
